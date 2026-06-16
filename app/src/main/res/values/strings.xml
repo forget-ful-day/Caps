@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">BottleCaps</string>
     
+    <!-- Spinner prompts -->
+    <string name="category_prompt">Выберите категорию</string>
+    <string name="rarity_prompt">Выберите редкость</string>
+    
     <!-- Categories -->
     <string-array name="categories">
         <item>Пивная</item>

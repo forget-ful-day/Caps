@@ -11,57 +11,142 @@ import java.util.List;
 
 import ru.maxim.bottlecaps.database.entity.WishlistEntity;
 
+/**
+ * Data Access Object (DAO) для работы с сущностью WishlistEntity.
+ * Предоставляет методы для CRUD операций и различных запросов к таблице wishlists.
+ */
 @Dao
 public interface WishlistDao {
 
+    /**
+     * Вставка новой желаемой крышки в базу данных.
+     *
+     * @param item объект WishlistEntity для вставки
+     * @return id вставленной записи
+     */
     @Insert
-    void insert(WishlistEntity wish);
+    long insert(WishlistEntity item);
 
+    /**
+     * Вставка нескольких желаемых крышек в базу данных.
+     *
+     * @param items список объектов WishlistEntity для вставки
+     */
     @Insert
-    void insertAll(List<WishlistEntity> wishes);
+    void insertAll(WishlistEntity... items);
 
+    /**
+     * Обновление существующей желаемой крышки в базе данных.
+     *
+     * @param item объект WishlistEntity для обновления
+     */
     @Update
-    void update(WishlistEntity wish);
+    void update(WishlistEntity item);
 
+    /**
+     * Обновление нескольких желаемых крышек в базе данных.
+     *
+     * @param items список объектов WishlistEntity для обновления
+     */
     @Update
-    void updateAll(List<WishlistEntity> wishes);
+    void updateAll(WishlistEntity... items);
 
+    /**
+     * Удаление желаемой крышки из базы данных.
+     *
+     * @param item объект WishlistEntity для удаления
+     */
     @Delete
-    void delete(WishlistEntity wish);
+    void delete(WishlistEntity item);
 
-    @Delete
-    void deleteAll(List<WishlistEntity> wishes);
+    /**
+     * Удаление желаемой крышки по id.
+     *
+     * @param id id желаемой крышки для удаления
+     */
+    @Query("DELETE FROM wishlists WHERE id = :id")
+    void deleteById(long id);
 
-    @Query("SELECT * FROM wishlists WHERE id = :wishId")
-    WishlistEntity getWishlistById(Long wishId);
-
+    /**
+     * Получение всех желаемых крышек, отсортированных по приоритету и дате добавления.
+     *
+     * @return LiveData со списком всех желаемых крышек
+     */
     @Query("SELECT * FROM wishlists ORDER BY priority DESC, added_date DESC")
-    LiveData<List<WishlistEntity>> getAllWishlists();
+    LiveData<List<WishlistEntity>> getAllWishlist();
 
+    /**
+     * Получение желаемых крышек синхронно (без LiveData).
+     *
+     * @return список всех желаемых крышек
+     */
     @Query("SELECT * FROM wishlists ORDER BY priority DESC, added_date DESC")
-    List<WishlistEntity> getAllWishlistsSync();
+    List<WishlistEntity> getAllWishlistSync();
 
+    /**
+     * Получение желаемых крышек по приоритету.
+     *
+     * @param priority приоритет (1-3)
+     * @return LiveData со списком желаемых крышек выбранного приоритета
+     */
     @Query("SELECT * FROM wishlists WHERE priority = :priority ORDER BY added_date DESC")
-    LiveData<List<WishlistEntity>> getWishlistsByPriority(int priority);
+    LiveData<List<WishlistEntity>> getWishlistByPriority(int priority);
 
-    @Query("SELECT * FROM wishlists WHERE name LIKE '%' || :searchQuery || '%' ORDER BY added_date DESC")
-    LiveData<List<WishlistEntity>> searchWishlists(String searchQuery);
+    /**
+     * Поиск желаемой крышки по названию.
+     *
+     * @param name название желаемой крышки
+     * @return объект WishlistEntity или null, если не найдена
+     */
+    @Query("SELECT * FROM wishlists WHERE name LIKE '%' || :name || '%' ORDER BY added_date DESC")
+    List<WishlistEntity> findByName(String name);
 
-    @Query("SELECT * FROM wishlists WHERE added_date BETWEEN :startTime AND :endTime ORDER BY added_date DESC")
-    LiveData<List<WishlistEntity>> getWishlistsByDateRange(long startTime, long endTime);
+    /**
+     * Проверка наличия желаемой крышки с указанным названием.
+     *
+     * @param name название желаемой крышки
+     * @return 1 если найдена, 0 если не найдена
+     */
+    @Query("SELECT COUNT(*) FROM wishlists WHERE name = :name")
+    int checkIfExists(String name);
 
-    @Query("SELECT COUNT(*) FROM wishlists")
-    LiveData<Integer> getTotalWishlistsCount();
-
-    @Query("SELECT COUNT(*) FROM wishlists WHERE priority = :priority")
-    LiveData<Integer> getWishlistsCountByPriority(int priority);
-
-    @Query("SELECT * FROM wishlists ORDER BY added_date DESC LIMIT 1")
-    WishlistEntity getLatestWishlist();
-
+    /**
+     * Удаление всех желаемых крышек из базы данных.
+     */
     @Query("DELETE FROM wishlists")
-    void deleteAllWishlists();
+    void clearAll();
 
-    @Query("SELECT COUNT(*) FROM wishlists WHERE added_date > :sinceDate")
-    int getWishlistsCountSince(long sinceDate);
+    /**
+     * Получение желаемой крышки по id.
+     *
+     * @param id id желаемой крышки
+     * @return объект WishlistEntity или null, если не найдена
+     */
+    @Query("SELECT * FROM wishlists WHERE id = :id")
+    WishlistEntity getById(long id);
+
+    /**
+     * Получение количества всех желаемых крышек.
+     *
+     * @return количество желаемых крышек
+     */
+    @Query("SELECT COUNT(*) FROM wishlists")
+    int getCount();
+
+    /**
+     * Получение количества желаемых крышек по приоритету.
+     *
+     * @param priority приоритет (1-3)
+     * @return количество желаемых крышек выбранного приоритета
+     */
+    @Query("SELECT COUNT(*) FROM wishlists WHERE priority = :priority")
+    int getCountByPriority(int priority);
+
+    /**
+     * Получение последней добавленной желаемой крышки.
+     *
+     * @return последняя добавленная желаемая крышка или null
+     */
+    @Query("SELECT * FROM wishlists ORDER BY added_date DESC LIMIT 1")
+    WishlistEntity getLatest();
 }

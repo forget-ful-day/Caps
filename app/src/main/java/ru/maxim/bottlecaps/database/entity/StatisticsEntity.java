@@ -5,45 +5,75 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "statistics", indices = {@Index(value = {"last_update"})})
+/**
+ * Сущность для кеширования статистики по крышкам.
+ * Хранит агрегированные данные для быстрого доступа без пересчета.
+ * Использует фиксированный id = 1 для хранения одной записи статистики.
+ */
+@Entity(tableName = "statistics",
+        indices = {
+            @Index(value = {"last_update"})
+        })
 public class StatisticsEntity {
 
-    @PrimaryKey(autoGenerate = true)
-    private Long id;
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    private Integer id;
 
-    @ColumnInfo(name = "total_caps")
+    @ColumnInfo(name = "total_caps", defaultValue = "0")
     private Integer totalCaps;
 
-    @ColumnInfo(name = "total_pivnye")
+    @ColumnInfo(name = "total_pivnye", defaultValue = "0")
     private Integer totalPivnye;
 
-    @ColumnInfo(name = "total_limonye")
+    @ColumnInfo(name = "total_limonye", defaultValue = "0")
     private Integer totalLimonye;
 
-    @ColumnInfo(name = "total_energeticheskie")
+    @ColumnInfo(name = "total_energeticheskie", defaultValue = "0")
     private Integer totalEnergeticheskie;
 
-    @ColumnInfo(name = "total_chainye")
+    @ColumnInfo(name = "total_chainye", defaultValue = "0")
     private Integer totalChainye;
 
-    @ColumnInfo(name = "total_drugie")
+    @ColumnInfo(name = "total_drugie", defaultValue = "0")
     private Integer totalDrugie;
 
-    @ColumnInfo(name = "total_rare")
+    @ColumnInfo(name = "total_rare", defaultValue = "0")
     private Integer totalRare;
 
-    @ColumnInfo(name = "total_unique")
+    @ColumnInfo(name = "total_unique", defaultValue = "0")
     private Integer totalUnique;
 
-    @ColumnInfo(name = "streak_days")
+    @ColumnInfo(name = "streak_days", defaultValue = "0")
     private Integer streakDays;
 
     @ColumnInfo(name = "last_update")
     private Long lastUpdate;
 
+    /**
+     * Пустой конструктор для Room
+     */
+    public StatisticsEntity() {
+        this.id = 1;
+        this.totalCaps = 0;
+        this.totalPivnye = 0;
+        this.totalLimonye = 0;
+        this.totalEnergeticheskie = 0;
+        this.totalChainye = 0;
+        this.totalDrugie = 0;
+        this.totalRare = 0;
+        this.totalUnique = 0;
+        this.streakDays = 0;
+        this.lastUpdate = System.currentTimeMillis();
+    }
+
+    /**
+     * Конструктор со всеми полями
+     */
     public StatisticsEntity(Integer totalCaps, Integer totalPivnye, Integer totalLimonye,
                             Integer totalEnergeticheskie, Integer totalChainye, Integer totalDrugie,
                             Integer totalRare, Integer totalUnique, Integer streakDays, Long lastUpdate) {
+        this.id = 1;
         this.totalCaps = totalCaps;
         this.totalPivnye = totalPivnye;
         this.totalLimonye = totalLimonye;
@@ -56,11 +86,13 @@ public class StatisticsEntity {
         this.lastUpdate = lastUpdate;
     }
 
-    public Long getId() {
+    //region Getters and Setters
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -143,4 +175,6 @@ public class StatisticsEntity {
     public void setLastUpdate(Long lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
+
+    //endregion
 }

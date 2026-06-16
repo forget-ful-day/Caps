@@ -11,81 +11,206 @@ import java.util.List;
 
 import ru.maxim.bottlecaps.database.entity.CapEntity;
 
+/**
+ * Data Access Object (DAO) для работы с сущностью CapEntity.
+ * Предоставляет методы для CRUD операций и различных запросов к таблице caps.
+ */
 @Dao
 public interface CapDao {
 
+    /**
+     * Вставка новой крышки в базу данных.
+     *
+     * @param cap объект CapEntity для вставки
+     * @return id вставленной записи
+     */
     @Insert
-    void insert(CapEntity cap);
+    long insert(CapEntity cap);
 
+    /**
+     * Вставка нескольких крышек в базу данных.
+     *
+     * @param caps список объектов CapEntity для вставки
+     */
     @Insert
-    void insertAll(List<CapEntity> caps);
+    void insertAll(CapEntity... caps);
 
+    /**
+     * Обновление существующей крышки в базе данных.
+     *
+     * @param cap объект CapEntity для обновления
+     */
     @Update
     void update(CapEntity cap);
 
+    /**
+     * Обновление нескольких крышек в базе данных.
+     *
+     * @param caps список объектов CapEntity для обновления
+     */
     @Update
-    void updateAll(List<CapEntity> caps);
+    void updateAll(CapEntity... caps);
 
+    /**
+     * Удаление крышки из базы данных.
+     *
+     * @param cap объект CapEntity для удаления
+     */
     @Delete
     void delete(CapEntity cap);
 
-    @Delete
-    void deleteAll(List<CapEntity> caps);
+    /**
+     * Удаление крышки по id.
+     *
+     * @param id id крышки для удаления
+     */
+    @Query("DELETE FROM caps WHERE id = :id")
+    void deleteById(long id);
 
-    @Query("SELECT * FROM caps WHERE id = :capId")
-    CapEntity getCapById(Long capId);
-
+    /**
+     * Получение всех крышек, отсортированных по дате добавления (от новых к старым).
+     *
+     * @return LiveData со списком всех крышек
+     */
     @Query("SELECT * FROM caps ORDER BY added_date DESC")
     LiveData<List<CapEntity>> getAllCaps();
 
+    /**
+     * Получение всех крышек синхронно (без LiveData).
+     *
+     * @return список всех крышек
+     */
     @Query("SELECT * FROM caps ORDER BY added_date DESC")
     List<CapEntity> getAllCapsSync();
 
-    @Query("SELECT * FROM caps WHERE category = :category ORDER BY found_date DESC")
+    /**
+     * Получение крышек по категории.
+     *
+     * @param category название категории (Пивная, Лимонадная, Энергетическая, Чайная, Другое)
+     * @return LiveData со списком крышек выбранной категории
+     */
+    @Query("SELECT * FROM caps WHERE category = :category ORDER BY added_date DESC")
     LiveData<List<CapEntity>> getCapsByCategory(String category);
 
-    @Query("SELECT * FROM caps WHERE rarity = :rarity ORDER BY found_date DESC")
+    /**
+     * Получение крышек по редкости.
+     *
+     * @param rarity редкость (Обычная, Редкая, Уникальная)
+     * @return LiveData со списком крышек выбранной редкости
+     */
+    @Query("SELECT * FROM caps WHERE rarity = :rarity ORDER BY added_date DESC")
     LiveData<List<CapEntity>> getCapsByRarity(String rarity);
 
-    @Query("SELECT * FROM caps WHERE country = :country ORDER BY found_date DESC")
-    LiveData<List<CapEntity>> getCapsByCountry(String country);
+    /**
+     * Поиск крышек по названию или тегам.
+     *
+     * @param query поисковый запрос
+     * @return LiveData со списком найденных крышек
+     */
+    @Query("SELECT * FROM caps WHERE name LIKE '%' || :query || '%' OR tags LIKE '%' || :query || '%' ORDER BY added_date DESC")
+    LiveData<List<CapEntity>> searchCaps(String query);
 
-    @Query("SELECT * FROM caps WHERE city = :city ORDER BY found_date DESC")
-    LiveData<List<CapEntity>> getCapsByCity(String city);
+    /**
+     * Получение крышки по id.
+     *
+     * @param id id крышки
+     * @return объект CapEntity или null, если не найдена
+     */
+    @Query("SELECT * FROM caps WHERE id = :id")
+    CapEntity getCapById(long id);
 
-    @Query("SELECT * FROM caps WHERE name LIKE '%' || :searchQuery || '%' OR tags LIKE '%' || :searchQuery || '%' ORDER BY found_date DESC")
-    LiveData<List<CapEntity>> searchCaps(String searchQuery);
+    /**
+     * Получение крышки по названию.
+     *
+     * @param name название крышки
+     * @return объект CapEntity или null, если не найдена
+     */
+    @Query("SELECT * FROM caps WHERE name = :name LIMIT 1")
+    CapEntity getCapByName(String name);
 
-    @Query("SELECT * FROM caps WHERE found_date BETWEEN :startTime AND :endTime ORDER BY found_date DESC")
-    LiveData<List<CapEntity>> getCapsByDateRange(long startTime, long endTime);
+    /**
+     * Получение крышек в заданных географических границах.
+     *
+     * @param latMin минимальная широта
+     * @param latMax максимальная широта
+     * @param lngMin минимальная долгота
+     * @param lngMax максимальная долгота
+     * @return список крышек в заданном диапазоне координат
+     */
+    @Query("SELECT * FROM caps WHERE latitude BETWEEN :latMin AND :latMax AND longitude BETWEEN :lngMin AND :lngMax")
+    List<CapEntity> getCapsByLocation(double latMin, double latMax, double lngMin, double lngMax);
 
-    @Query("SELECT * FROM caps WHERE latitude IS NOT NULL AND longitude IS NOT NULL ORDER BY found_date DESC")
-    LiveData<List<CapEntity>> getCapsWithGeolocation();
-
-    @Query("SELECT * FROM caps WHERE latitude BETWEEN :minLat AND :maxLat AND longitude BETWEEN :minLng AND :maxLng ORDER BY found_date DESC")
-    LiveData<List<CapEntity>> getCapsInBounds(double minLat, double maxLat, double minLng, double maxLng);
-
+    /**
+     * Получение количества всех крышек в базе данных.
+     *
+     * @return количество крышек
+     */
     @Query("SELECT COUNT(*) FROM caps")
-    LiveData<Integer> getTotalCapsCount();
+    int getTotalCount();
 
+    /**
+     * Получение количества крышек по категории.
+     *
+     * @param category название категории
+     * @return количество крышек в категории
+     */
     @Query("SELECT COUNT(*) FROM caps WHERE category = :category")
-    LiveData<Integer> getCapsCountByCategory(String category);
+    int getCountByCategory(String category);
 
+    /**
+     * Получение количества крышек по редкости.
+     *
+     * @param rarity редкость
+     * @return количество крышек выбранной редкости
+     */
     @Query("SELECT COUNT(*) FROM caps WHERE rarity = :rarity")
-    LiveData<Integer> getCapsCountByRarity(String rarity);
+    int getCountByRarity(String rarity);
 
-    @Query("SELECT * FROM caps ORDER BY found_date DESC LIMIT 1")
+    /**
+     * Получение последней добавленной крышки.
+     *
+     * @return последняя добавленная крышка или null
+     */
+    @Query("SELECT * FROM caps ORDER BY added_date DESC LIMIT 1")
     CapEntity getLatestCap();
 
+    /**
+     * Получение всех крышек с координатами (geolocation).
+     *
+     * @return список крышек с установленными координатами
+     */
+    @Query("SELECT * FROM caps WHERE latitude IS NOT NULL AND longitude IS NOT NULL")
+    List<CapEntity> getCapsWithGeolocation();
+
+    /**
+     * Получение несинхронизированных крышек.
+     *
+     * @return список крышек, которые еще не синхронизированы
+     */
     @Query("SELECT * FROM caps WHERE is_synced = 0 ORDER BY added_date ASC")
     List<CapEntity> getUnsyncedCaps();
 
-    @Query("UPDATE caps SET is_synced = 1 WHERE id = :capId")
-    void setCapSynced(Long capId);
+    /**
+     * Пометка крышки как синхронизированной.
+     *
+     * @param id id крышки
+     * @param isSynced флаг синхронизации
+     */
+    @Query("UPDATE caps SET is_synced = :isSynced WHERE id = :id")
+    void setSynced(long id, boolean isSynced);
 
+    /**
+     * Удаление всех крышек из базы данных.
+     */
     @Query("DELETE FROM caps")
     void deleteAllCaps();
 
-    @Query("SELECT COUNT(*) FROM caps WHERE found_date > :sinceDate")
-    int getCapsCountSince(long sinceDate);
+    /**
+     * Получение количества крышек с даты.
+     *
+     * @param sinceDate Unix timestamp в миллисекундах
+     * @return количество крышек, добавленных с указанной даты
+     */
+    @Query("SELECT COUNT(*) FROM caps WHERE added_date > :sinceDate")
+    int getCountSince(long sinceDate);
 }

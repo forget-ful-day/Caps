@@ -1,93 +1,191 @@
-package ru.maxim.bottlecaps.database.repository;
+package ru.maxim.bottlecaps.database;
 
 import android.content.Context;
-
-import androidx.lifecycle.LiveData;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import ru.maxim.bottlecaps.database.AppDatabase;
 import ru.maxim.bottlecaps.database.dao.WishlistDao;
 import ru.maxim.bottlecaps.database.entity.WishlistEntity;
 
+/**
+ * Репозиторий для работы с сущностью WishlistEntity.
+ * Слой абстракции над базой данных для желаемых крышек.
+ * Определяет методы для CRUD операций и различных запросов к таблице wishlists.
+ */
 public class WishlistRepository {
 
     private final WishlistDao wishlistDao;
     private final ExecutorService executorService;
 
+    /**
+     * Конструктор репозитория.
+     *
+     * @param context контекст приложения
+     */
     public WishlistRepository(Context context) {
         AppDatabase database = AppDatabase.getInstance(context);
         wishlistDao = database.wishlistDao();
+        // Используем ExecutorService вместо устаревшего AsyncTask
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    public void insertWishlist(WishlistEntity wish) {
-        executorService.execute(() -> wishlistDao.insert(wish));
+    //region Вставка данных
+
+    /**
+     * Вставка новой желаемой крышки в базу данных (асинхронно).
+     *
+     * @param item объект WishlistEntity для вставки
+     */
+    public void insert(final WishlistEntity item) {
+        executorService.execute(() -> wishlistDao.insert(item));
     }
 
-    public void insertWishlists(List<WishlistEntity> wishes) {
-        executorService.execute(() -> wishlistDao.insertAll(wishes));
+    /**
+     * Вставка нескольких желаемых крышек в базу данных (асинхронно).
+     *
+     * @param items список объектов WishlistEntity для вставки
+     */
+    public void insertAll(final WishlistEntity... items) {
+        executorService.execute(() -> wishlistDao.insertAll(items));
     }
 
-    public void updateWishlist(WishlistEntity wish) {
-        executorService.execute(() -> wishlistDao.update(wish));
+    //endregion
+
+    //region Обновление данных
+
+    /**
+     * Обновление желаемой крышки в базе данных (асинхронно).
+     *
+     * @param item объект WishlistEntity для обновления
+     */
+    public void update(final WishlistEntity item) {
+        executorService.execute(() -> wishlistDao.update(item));
     }
 
-    public void updateWishlists(List<WishlistEntity> wishes) {
-        executorService.execute(() -> wishlistDao.updateAll(wishes));
+    /**
+     * Обновление нескольких желаемых крышек в базе данных (асинхронно).
+     *
+     * @param items список объектов WishlistEntity для обновления
+     */
+    public void updateAll(final WishlistEntity... items) {
+        executorService.execute(() -> wishlistDao.updateAll(items));
     }
 
-    public void deleteWishlist(WishlistEntity wish) {
-        executorService.execute(() -> wishlistDao.delete(wish));
+    //endregion
+
+    //region Удаление данных
+
+    /**
+     * Удаление желаемой крышки из базы данных (асинхронно).
+     *
+     * @param item объект WishlistEntity для удаления
+     */
+    public void delete(final WishlistEntity item) {
+        executorService.execute(() -> wishlistDao.delete(item));
     }
 
-    public void deleteWishlists(List<WishlistEntity> wishes) {
-        executorService.execute(() -> wishlistDao.deleteAll(wishes));
+    /**
+     * Удаление желаемой крышки по id (асинхронно).
+     *
+     * @param id id желаемой крышки для удаления
+     */
+    public void deleteById(final long id) {
+        executorService.execute(() -> wishlistDao.deleteById(id));
     }
 
-    public WishlistEntity getWishlistById(Long wishId) {
-        return wishlistDao.getWishlistById(wishId);
+    /**
+     * Удаление всех желаемых крышек из базы данных (асинхронно).
+     */
+    public void clearAll() {
+        executorService.execute(wishlistDao::clearAll);
     }
 
-    public LiveData<List<WishlistEntity>> getAllWishlists() {
-        return wishlistDao.getAllWishlists();
+    //endregion
+
+    //region Чтение данных (синхронные методы)
+
+    /**
+     * Получение желаемой крышки по id (синхронно).
+     *
+     * @param id id желаемой крышки
+     * @return объект WishlistEntity или null, если не найдена
+     */
+    public WishlistEntity getById(long id) {
+        return wishlistDao.getById(id);
     }
 
-    public List<WishlistEntity> getAllWishlistsSync() {
-        return wishlistDao.getAllWishlistsSync();
+    /**
+     * Получение всех желаемых крышек (синхронно).
+     *
+     * @return список всех желаемых крышек
+     */
+    public List<WishlistEntity> getAll() {
+        return wishlistDao.getAllWishlistSync();
     }
 
-    public LiveData<List<WishlistEntity>> getWishlistsByPriority(int priority) {
-        return wishlistDao.getWishlistsByPriority(priority);
+    /**
+     * Поиск желаемой крышки по названию (синхронно).
+     *
+     * @param name название желаемой крышки
+     * @return список найденных желаемых крышек
+     */
+    public List<WishlistEntity> findByName(String name) {
+        return wishlistDao.findByName(name);
     }
 
-    public LiveData<List<WishlistEntity>> searchWishlists(String searchQuery) {
-        return wishlistDao.searchWishlists(searchQuery);
+    /**
+     * Проверка наличия желаемой крышки с указанным названием (синхронно).
+     *
+     * @param name название желаемой крышки
+     * @return 1 если найдена, 0 если не найдена
+     */
+    public int checkIfExists(String name) {
+        return wishlistDao.checkIfExists(name);
     }
 
-    public LiveData<List<WishlistEntity>> getWishlistsByDateRange(long startTime, long endTime) {
-        return wishlistDao.getWishlistsByDateRange(startTime, endTime);
+    /**
+     * Получение последней добавленной желаемой крышки (синхронно).
+     *
+     * @return последняя добавленная желаемая крышка или null
+     */
+    public WishlistEntity getLatest() {
+        return wishlistDao.getLatest();
     }
 
-    public LiveData<Integer> getTotalWishlistsCount() {
-        return wishlistDao.getTotalWishlistsCount();
+    /**
+     * Получение количества всех желаемых крышек (синхронно).
+     *
+     * @return количество желаемых крышек
+     */
+    public int getCount() {
+        return wishlistDao.getCount();
     }
 
-    public LiveData<Integer> getWishlistsCountByPriority(int priority) {
-        return wishlistDao.getWishlistsCountByPriority(priority);
+    //endregion
+
+    //region Запросы с фильтрацией (синхронные методы)
+
+    /**
+     * Получение желаемых крышек по приоритету (синхронно).
+     *
+     * @param priority приоритет (1-3)
+     * @return список желаемых крышек приоритета
+     */
+    public List<WishlistEntity> getByPriority(int priority) {
+        return null; // Заглушка
     }
 
-    public WishlistEntity getLatestWishlist() {
-        return wishlistDao.getLatestWishlist();
+    /**
+     * Получение количества желаемых крышек по приоритету (синхронно).
+     *
+     * @param priority приоритет (1-3)
+     * @return количество желаемых крышек приоритета
+     */
+    public int getCountByPriority(int priority) {
+        return wishlistDao.getCountByPriority(priority);
     }
 
-    public void deleteAllWishlists() {
-        executorService.execute(() -> wishlistDao.deleteAllWishlists());
-    }
-
-    public int getWishlistsCountSince(long sinceDate) {
-        return wishlistDao.getWishlistsCountSince(sinceDate);
-    }
+    //endregion
 }

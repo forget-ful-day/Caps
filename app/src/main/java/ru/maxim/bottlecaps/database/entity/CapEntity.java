@@ -2,21 +2,38 @@ package ru.maxim.bottlecaps.database.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "caps")
+/**
+ * Сущность для хранения информации о найденной крышке.
+ * Главная таблица базы данных приложения BottleCaps.
+ */
+@Entity(tableName = "caps",
+        indices = {
+            @Index(value = {"name"}, unique = true),
+            @Index(value = {"category"}),
+            @Index(value = {"rarity"}),
+            @Index(value = {"country"}),
+            @Index(value = {"city"}),
+            @Index(value = {"found_date"}),
+            @Index(value = {"added_date"}),
+            @Index(value = {"is_synced"})
+        })
 public class CapEntity {
 
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     private Long id;
 
-    @ColumnInfo(name = "name")
+    @ColumnInfo(name = "name", nullable = false)
     private String name;
 
     @ColumnInfo(name = "photo_path")
     private String photoPath;
 
-    @ColumnInfo(name = "category")
+    @ColumnInfo(name = "category", nullable = false)
     private String category;
 
     @ColumnInfo(name = "country")
@@ -25,7 +42,7 @@ public class CapEntity {
     @ColumnInfo(name = "city")
     private String city;
 
-    @ColumnInfo(name = "rarity")
+    @ColumnInfo(name = "rarity", nullable = false)
     private String rarity;
 
     @ColumnInfo(name = "tags")
@@ -43,9 +60,18 @@ public class CapEntity {
     @ColumnInfo(name = "added_date")
     private Long addedDate;
 
-    @ColumnInfo(name = "is_synced")
+    @ColumnInfo(name = "is_synced", defaultValue = "0")
     private Boolean isSynced;
 
+    /**
+     * Пустой конструктор для Room
+     */
+    public CapEntity() {
+    }
+
+    /**
+     * Конструктор со всеми полями
+     */
     public CapEntity(String name, String photoPath, String category, String country, String city,
                      String rarity, String tags, Double latitude, Double longitude,
                      Long foundDate, Long addedDate, Boolean isSynced) {
@@ -62,6 +88,19 @@ public class CapEntity {
         this.addedDate = addedDate;
         this.isSynced = isSynced;
     }
+
+    /**
+     * Конструктор для Room с игнорированием одного поля
+     */
+    @Ignore
+    public CapEntity(String name, String photoPath, String category, String country, String city,
+                     String rarity, String tags, Double latitude, Double longitude,
+                     Long foundDate, Long addedDate) {
+        this(name, photoPath, category, country, city, rarity, tags, latitude, longitude,
+                foundDate, addedDate, false);
+    }
+
+    //region Getters and Setters
 
     public Long getId() {
         return id;
@@ -166,4 +205,6 @@ public class CapEntity {
     public void setIsSynced(Boolean isSynced) {
         this.isSynced = isSynced;
     }
+
+    //endregion
 }

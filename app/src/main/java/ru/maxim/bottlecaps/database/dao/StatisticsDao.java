@@ -1,67 +1,123 @@
 package ru.maxim.bottlecaps.database.dao;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import java.util.List;
-
 import ru.maxim.bottlecaps.database.entity.StatisticsEntity;
 
+/**
+ * Data Access Object (DAO) для работы с сущностью StatisticsEntity.
+ * Предоставляет методы для работы с таблицей statistics.
+ */
 @Dao
 public interface StatisticsDao {
 
-    @Insert
-    void insert(StatisticsEntity statistics);
+    /**
+     * Вставка или замена статистики в базе данных.
+     * Используется стратегия REPLACE, так как у нас всегда одна запись с id = 1.
+     *
+     * @param stats объект StatisticsEntity для вставки
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(StatisticsEntity stats);
 
-    @Insert
-    void insertAll(List<StatisticsEntity> statisticsList);
-
+    /**
+     * Обновление существующей статистики в базе данных.
+     *
+     * @param stats объект StatisticsEntity для обновления
+     */
     @Update
-    void update(StatisticsEntity statistics);
+    void update(StatisticsEntity stats);
 
-    @Update
-    void updateAll(List<StatisticsEntity> statisticsList);
+    /**
+     * Получение текущей статистики.
+     * В таблице statistics всегда только одна запись с id = 1.
+     *
+     * @return объект StatisticsEntity
+     */
+    @Query("SELECT * FROM statistics WHERE id = 1")
+    StatisticsEntity getStatistics();
 
-    @Delete
-    void delete(StatisticsEntity statistics);
+    /**
+     * Обновление общего количества крышек.
+     *
+     * @param total общее количество крышек
+     */
+    @Query("UPDATE statistics SET total_caps = :total, last_update = :timestamp WHERE id = 1")
+    void updateTotalCaps(int total, long timestamp);
 
-    @Delete
-    void deleteAll(List<StatisticsEntity> statisticsList);
+    /**
+     * Обновление количества пивных крышек.
+     *
+     * @param total количество пивных крышек
+     */
+    @Query("UPDATE statistics SET total_pivnye = :total WHERE id = 1")
+    void updateTotalPivnye(int total);
 
-    @Query("SELECT * FROM statistics WHERE id = :statisticsId")
-    StatisticsEntity getStatisticsById(Long statisticsId);
+    /**
+     * Обновление количества лимонадных крышек.
+     *
+     * @param total количество лимонадных крышек
+     */
+    @Query("UPDATE statistics SET total_limonye = :total WHERE id = 1")
+    void updateTotalLimonye(int total);
 
-    @Query("SELECT * FROM statistics ORDER BY last_update DESC LIMIT 1")
-    LiveData<StatisticsEntity> getCurrentStatistics();
+    /**
+     * Обновление количества энергетических крышек.
+     *
+     * @param total количество энергетических крышек
+     */
+    @Query("UPDATE statistics SET total_energeticheskie = :total WHERE id = 1")
+    void updateTotalEnergeticheskie(int total);
 
-    @Query("SELECT * FROM statistics ORDER BY last_update DESC LIMIT 1")
-    StatisticsEntity getCurrentStatisticsSync();
+    /**
+     * Обновление количества чайных крышек.
+     *
+     * @param total количество чайных крышек
+     */
+    @Query("UPDATE statistics SET total_chainye = :total WHERE id = 1")
+    void updateTotalChainye(int total);
 
-    @Query("SELECT * FROM statistics ORDER BY last_update DESC")
-    LiveData<List<StatisticsEntity>> getAllStatistics();
+    /**
+     * Обновление количества прочих крышек.
+     *
+     * @param total количество прочих крышек
+     */
+    @Query("UPDATE statistics SET total_drugie = :total WHERE id = 1")
+    void updateTotalDrugie(int total);
 
-    @Query("SELECT * FROM statistics WHERE last_update BETWEEN :startTime AND :endTime ORDER BY last_update DESC")
-    LiveData<List<StatisticsEntity>> getStatisticsByDateRange(long startTime, long endTime);
+    /**
+     * Обновление количества редких крышек.
+     *
+     * @param total количество редких крышек
+     */
+    @Query("UPDATE statistics SET total_rare = :total WHERE id = 1")
+    void updateTotalRare(int total);
 
-    @Query("DELETE FROM statistics")
-    void deleteAllStatistics();
+    /**
+     * Обновление количества уникальных крышек.
+     *
+     * @param total количество уникальных крышек
+     */
+    @Query("UPDATE statistics SET total_unique = :total WHERE id = 1")
+    void updateTotalUnique(int total);
 
-    @Query("UPDATE statistics SET total_caps = :totalCaps, total_pivnye = :totalPivnye, total_limonye = :totalLimonye, total_energeticheskie = :totalEnergeticheskie, total_chainye = :totalChainye, total_drugie = :totalDrugie, total_rare = :totalRare, total_unique = :totalUnique, streak_days = :streakDays, last_update = :lastUpdate WHERE id = :statisticsId")
-    void updateStatistics(Long statisticsId, int totalCaps, int totalPivnye, int totalLimonye, int totalEnergeticheskie, int totalChainye, int totalDrugie, int totalRare, int totalUnique, int streakDays, long lastUpdate);
+    /**
+     * Обновление количества дней подряд (streak).
+     *
+     * @param streak количество дней подряд
+     */
+    @Query("UPDATE statistics SET streak_days = :streak WHERE id = 1")
+    void updateStreakDays(int streak);
 
-    @Query("SELECT total_caps FROM statistics ORDER BY last_update DESC LIMIT 1")
-    LiveData<Integer> getTotalCapsCount();
-
-    @Query("SELECT total_rare FROM statistics ORDER BY last_update DESC LIMIT 1")
-    LiveData<Integer> getTotalRareCount();
-
-    @Query("SELECT total_unique FROM statistics ORDER BY last_update DESC LIMIT 1")
-    LiveData<Integer> getTotalUniqueCount();
-
-    @Query("SELECT streak_days FROM statistics ORDER BY last_update DESC LIMIT 1")
-    LiveData<Integer> getStreakDays();
+    /**
+     * Обновление даты последнего обновления.
+     *
+     * @param timestamp Unix timestamp в миллисекундах
+     */
+    @Query("UPDATE statistics SET last_update = :timestamp WHERE id = 1")
+    void updateLastUpdate(long timestamp);
 }

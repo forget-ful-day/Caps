@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules.xml"
         android:fullBackupContent="@xml/backup_rules.xml"
@@ -12,7 +13,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BottleCaps"
         tools:targetApi="31">
-        <!-- Activities will be added here -->
+        
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.BottleCaps">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
     </application>
 
 </manifest>
