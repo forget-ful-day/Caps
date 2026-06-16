@@ -1,27 +1,97 @@
-# BottleCaps Database
+# BottleCaps Database Repository
 
-База данных для приложения "BottleCaps" - сбор и хранение крышек.
+Это репозиторий базы данных для приложения "BottleCaps" - сбор и хранение данных о найденных крышках.
 
-## Структура проекта
+## Структура
 
-- `app/src/main/java/ru/maxim/bottlecaps/database/` - сущности, DAO и база данных
-- `app/src/main/java/ru/maxim/bottlecaps/repository/` - репозитории
-- `app/src/main/java/ru/maxim/bottlecaps/viewmodel/` - ViewModel
+```
+app/src/main/java/ru/maxim/bottlecaps/database/
+├── AppDatabase.java          # Главный класс БД с singleton
+├── DatabaseConstants.java    # Константы категорий и редкостей
+├── dao/
+│   ├── CapDao.java           # DAO для крышек (15+ методов)
+│   ├── WishlistDao.java      # DAO для вишлиста (10+ методов)
+│   └── StatisticsDao.java    # DAO для статистики (10+ методов)
+├── entity/
+│   ├── CapEntity.java        # Сущность крышки
+│   ├── WishlistEntity.java   # Сущность вишлиста
+│   └── StatisticsEntity.java # Сущность статистики
+└── repository/
+    ├── CapRepository.java         # Репозиторий крышек
+    ├── WishlistRepository.java    # Репозиторий вишлиста
+    └── StatisticsRepository.java  # Репозиторий статистики
+```
 
-## Сущности базы данных
+## Сущности
 
 ### CapEntity
-- id, name, photoPath, category, country, city, rarity, tags, latitude, longitude, foundDate, addedDate, isSynced
+```java
+- id: Long
+- name: String
+- photoPath: String
+- category: String (Пивная, Лимонадная, Энергетическая, Чайная, Другое)
+- country: String
+- city: String
+- rarity: String (Обычная, Редкая, Уникальная)
+- tags: String
+- latitude: Double
+- longitude: Double
+- foundDate: Long (Unix timestamp)
+- addedDate: Long (Unix timestamp)
+- isSynced: Boolean
+```
 
-### WishlistEntity  
-- id, name, description, priority, addedDate
+### WishlistEntity
+```java
+- id: Long
+- name: String
+- description: String
+- priority: Int
+- addedDate: Long (Unix timestamp)
+```
 
 ### StatisticsEntity
-- id, totalCaps, totalPivnye, totalLimonye, totalEnergeticheskie, totalChainye, totalDrugie, totalRare, totalUnique, streakDays, lastUpdate
+```java
+- id: Long
+- totalCaps: Int
+- totalPivnye: Int
+- totalLimonye: Int
+- totalEnergeticheskie: Int
+- totalChainye: Int
+- totalDrugie: Int
+- totalRare: Int
+- totalUnique: Int
+- streakDays: Int
+- lastUpdate: Long (Unix timestamp)
+```
 
-## Доступ к базе данных
+## Использование
 
-Используйте `AppDatabase.getInstance()` для доступа к базе данных.
+```java
+// Получение экземпляра БД
+AppDatabase db = AppDatabase.getInstance(context);
+
+// Работа с крышекми
+CapEntity cap = new CapEntity(...);
+db.capDao().insert(cap);
+
+// Работа с вишлистом
+WishlistEntity wish = new WishlistEntity(...);
+db.wishlistDao().insert(wish);
+
+// Работа со статистикой
+StatisticsEntity stats = new StatisticsEntity(...);
+db.statisticsDao().insert(stats);
+```
+
+## Особенности
+
+- Room Persistence Library версия 2.6.1
+- Использование Java (не Kotlin)
+- Стандартные категории: "Пивная", "Лимонадная", "Энергетическая", "Чайная", "Другое"
+- Стандартные редкости: "Обычная", "Редкая", "Уникальная"
+- Все даты хранятся как Unix timestamp в миллисекундах
+- Synchronized singleton паттерн для доступа к БД
 
 ## Лицензия
 

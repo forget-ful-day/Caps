@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BottleCaps</string>
+    
+    <!-- Categories -->
+    <string-array name="categories">
+        <item>Пивная</item>
+        <item>Лимонадная</item>
+        <item>Энергетическая</item>
+        <item>Чайная</item>
+        <item>Другое</item>
+    </string-array>
+    
+    <!-- Rarities -->
+    <string-array name="rarities">
+        <item>Обычная</item>
+        <item>Редкая</item>
+        <item>Уникальная</item>
+    </string-array>
+</resources>
