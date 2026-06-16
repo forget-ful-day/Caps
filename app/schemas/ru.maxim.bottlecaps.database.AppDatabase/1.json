@@ -1,0 +1,79 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "bottle_caps_2024",
+    "entities": [
+      {
+        "tableName": "caps",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `photo_path` TEXT, `category` TEXT NOT NULL, `country` TEXT, `city` TEXT, `rarity` TEXT NOT NULL, `tags` TEXT, `latitude` REAL, `longitude` REAL, `found_date` INTEGER NOT NULL, `added_date` INTEGER NOT NULL, `is_synced` INTEGER NOT NULL)",
+        "fields": [
+          {"fieldPath": "id", "columnName": "id", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "name", "columnName": "name", "affinity": "TEXT", "notNull": true},
+          {"fieldPath": "photoPath", "columnName": "photo_path", "affinity": "TEXT", "notNull": false},
+          {"fieldPath": "category", "columnName": "category", "affinity": "TEXT", "notNull": true},
+          {"fieldPath": "country", "columnName": "country", "affinity": "TEXT", "notNull": false},
+          {"fieldPath": "city", "columnName": "city", "affinity": "TEXT", "notNull": false},
+          {"fieldPath": "rarity", "columnName": "rarity", "affinity": "TEXT", "notNull": true},
+          {"fieldPath": "tags", "columnName": "tags", "affinity": "TEXT", "notNull": false},
+          {"fieldPath": "latitude", "columnName": "latitude", "affinity": "REAL", "notNull": false},
+          {"fieldPath": "longitude", "columnName": "longitude", "affinity": "REAL", "notNull": false},
+          {"fieldPath": "foundDate", "columnName": "found_date", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "addedDate", "columnName": "added_date", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "isSynced", "columnName": "is_synced", "affinity": "INTEGER", "notNull": true}
+        ],
+        "primaryKey": {"columnNames": ["id"], "autoGenerate": true},
+        "indices": [
+          {"name": "index_caps_name", "unique": true, "columnNames": ["name"]},
+          {"name": "index_caps_category", "unique": false, "columnNames": ["category"]},
+          {"name": "index_caps_rarity", "unique": false, "columnNames": ["rarity"]},
+          {"name": "index_caps_foundDate", "unique": false, "columnNames": ["foundDate"]},
+          {"name": "index_caps_addedDate", "unique": false, "columnNames": ["addedDate"]}
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "wishlist",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `priority` INTEGER NOT NULL, `added_date` INTEGER NOT NULL)",
+        "fields": [
+          {"fieldPath": "id", "columnName": "id", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "name", "columnName": "name", "affinity": "TEXT", "notNull": true},
+          {"fieldPath": "description", "columnName": "description", "affinity": "TEXT", "notNull": false},
+          {"fieldPath": "priority", "columnName": "priority", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "addedDate", "columnName": "added_date", "affinity": "INTEGER", "notNull": true}
+        ],
+        "primaryKey": {"columnNames": ["id"], "autoGenerate": true},
+        "indices": [
+          {"name": "index_wishlist_name", "unique": true, "columnNames": ["name"]},
+          {"name": "index_wishlist_priority", "unique": false, "columnNames": ["priority"]},
+          {"name": "index_wishlist_addedDate", "unique": false, "columnNames": ["addedDate"]}
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "statistics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `total_caps` INTEGER NOT NULL, `total_pivnye` INTEGER NOT NULL, `total_limonye` INTEGER NOT NULL, `total_energeticheskie` INTEGER NOT NULL, `total_chainye` INTEGER NOT NULL, `total_drugie` INTEGER NOT NULL, `total_rare` INTEGER NOT NULL, `total_unique` INTEGER NOT NULL, `streak_days` INTEGER NOT NULL, `last_update` INTEGER NOT NULL, PRIMARY KEY (`id`))",
+        "fields": [
+          {"fieldPath": "id", "columnName": "id", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "totalCaps", "columnName": "total_caps", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "totalPivnye", "columnName": "total_pivnye", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "totalLimonye", "columnName": "total_limonye", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "totalEnergeticheskie", "columnName": "total_energeticheskie", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "totalChainye", "columnName": "total_chainye", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "totalDrugie", "columnName": "total_drugie", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "totalRare", "columnName": "total_rare", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "totalUnique", "columnName": "total_unique", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "streakDays", "columnName": "streak_days", "affinity": "INTEGER", "notNull": true},
+          {"fieldPath": "lastUpdate", "columnName": "last_update", "affinity": "INTEGER", "notNull": true}
+        ],
+        "primaryKey": {"columnNames": ["id"], "autoGenerate": false},
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY, identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id, identity_hash) VALUES(42, 'bottle_caps_2024')"
+    ]
+  }
+}
