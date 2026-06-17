@@ -1,0 +1,46 @@
+{
+  "caps": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Coca-Cola Red",
+      "type": "Bottle",
+      "color": "#FF0000",
+      "latitude": 55.7558,
+      "longitude": 37.6173,
+      "imageBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+      "ownerId": "User_AnonymousCollector",
+      "isAvailableForTrade": true,
+      "dateAdded": "2024-06-17T10:30:00Z",
+      "notes": "Оригинальная крышка из магазина",
+      "tradeRequests": 0
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "name": "Sprite Green",
+      "type": "Bottle",
+      "color": "#00AA00",
+      "latitude": 55.7560,
+      "longitude": 37.6175,
+      "imageBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+      "ownerId": "User_LocalCollector",
+      "isAvailableForTrade": true,
+      "dateAdded": "2024-06-17T11:45:00Z",
+      "notes": "Редкая крышка, ищу обмен",
+      "tradeRequests": 2
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440003",
+      "name": "Fanta Orange",
+      "type": "Can",
+      "color": "#FF8800",
+      "latitude": 55.7562,
+      "longitude": 37.6170,
+      "imageBase64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+      "ownerId": "User_Collector42",
+      "isAvailableForTrade": false,
+      "dateAdded": "2024-06-17T12:00:00Z",
+      "notes": "Личная коллекция, не для продажи",
+      "tradeRequests": 0
+    }
+  ]
+}
